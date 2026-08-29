@@ -1,13 +1,174 @@
-<div class="container mt-5">
+<div class="container py-5">
   <div class="row justify-content-center">
-    <div class="col-md-7">
-      <div class="card shadow">
-        <div class="card-header">
-          <h3 class="mb-0">User Registration</h3>
+    <div class="col-12 col-sm-10 col-md-8 col-lg-6">
+      <div class="card shadow-sm border-0">
+        <!-- Header -->
+
+        <div class="card-header bg-primary text-white text-center py-3">
+          <h3 class="mb-0">Create Account</h3>
+
+          <small> Register a new account </small>
         </div>
 
-        <div class="card-body">
-          <p>Registration page will be implemented later.</p>
+        <!-- Body -->
+
+        <div class="card-body p-4">
+          <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+            <!-- Username -->
+
+            <div class="mb-3">
+              <label for="username" class="form-label"> Username </label>
+
+              <input
+                id="username"
+                type="text"
+                class="form-control"
+                formControlName="username"
+                placeholder="Enter username"
+                autocomplete="username"
+              />
+
+              @if (
+                registerForm.get('username')?.touched &&
+                registerForm.get('username')?.hasError('required')
+              ) {
+                <div class="text-danger small mt-1">Username is required.</div>
+              }
+
+              @if (
+                registerForm.get('username')?.touched &&
+                registerForm.get('username')?.hasError('minlength')
+              ) {
+                <div class="text-danger small mt-1">
+                  Username must contain at least 3 characters.
+                </div>
+              }
+            </div>
+
+            <!-- Email -->
+
+            <div class="mb-3">
+              <label for="email" class="form-label"> Email Address </label>
+              <input
+                id="email"
+                type="email"
+                class="form-control"
+                formControlName="email"
+                placeholder="Enter email address"
+                autocomplete="email"
+              />
+
+              @if (
+                registerForm.get('email')?.touched &&
+                registerForm.get('email')?.hasError('required')
+              ) {
+                <div class="text-danger small mt-1">Email is required.</div>
+              }
+              @if (
+                registerForm.get('email')?.touched && registerForm.get('email')?.hasError('email')
+              ) {
+                <div class="text-danger small mt-1">Please enter a valid email address.</div>
+              }
+            </div>
+
+            <!-- Password -->
+
+            <div class="mb-3">
+              <label for="password" class="form-label"> Password </label>
+
+              <div class="input-group">
+                <input
+                  id="password"
+                  [type]="showPassword ? 'text' : 'password'"
+                  class="form-control"
+                  formControlName="password"
+                  placeholder="Enter password"
+                  autocomplete="new-password"
+                />
+
+                <button type="button" class="btn btn-outline-secondary" (click)="togglePassword()">
+                  {{ showPassword ? 'Hide' : 'Show' }}
+                </button>
+              </div>
+
+              @if (
+                registerForm.get('password')?.touched &&
+                registerForm.get('password')?.hasError('required')
+              ) {
+                <div class="text-danger small mt-1">Password is required.</div>
+              }
+
+              @if (
+                registerForm.get('password')?.touched &&
+                registerForm.get('password')?.hasError('minlength')
+              ) {
+                <div class="text-danger small mt-1">
+                  Password must contain at least 8 characters.
+                </div>
+              }
+            </div>
+
+            <!-- Confirm Password -->
+
+            <div class="mb-3">
+              <label for="confirmPassword" class="form-label"> Confirm Password </label>
+
+              <div class="input-group">
+                <input
+                  id="confirmPassword"
+                  [type]="showConfirmPassword ? 'text' : 'password'"
+                  class="form-control"
+                  formControlName="confirmPassword"
+                  placeholder="Confirm password"
+                  autocomplete="new-password"
+                />
+
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  (click)="toggleConfirmPassword()"
+                >
+                  {{ showConfirmPassword ? 'Hide' : 'Show' }}
+                </button>
+              </div>
+
+              @if (
+                registerForm.get('confirmPassword')?.touched &&
+                registerForm.get('confirmPassword')?.hasError('required')
+              ) {
+                <div class="text-danger small mt-1">Please confirm your password.</div>
+              }
+
+              @if (
+                registerForm.get('confirmPassword')?.touched &&
+                registerForm.hasError('passwordMismatch')
+              ) {
+                <div class="text-danger small mt-1">Passwords do not match.</div>
+              }
+            </div>
+
+            <!-- Register Button -->
+
+            <div class="d-grid mt-4">
+              <button type="submit" class="btn btn-primary" [disabled]="isSubmitting">
+                @if (isSubmitting) {
+                  <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"> </span>
+
+                  Registering...
+                } @else {
+                  Register
+                }
+              </button>
+            </div>
+
+            <!-- Login Link -->
+
+            <div class="text-center mt-4">
+              <span class="text-muted"> Already have an account? </span>
+
+              <a routerLink="/login" class="ms-1"> Login </a>
+            </div>
+          </form>
         </div>
       </div>
     </div>
