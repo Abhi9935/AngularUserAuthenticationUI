@@ -1,13 +1,109 @@
-<div class="container mt-5">
+<div class="container py-5">
   <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card shadow">
-        <div class="card-header">
-          <h3 class="mb-0">Login</h3>
+    <div class="col-12 col-sm-10 col-md-7 col-lg-5">
+      <div class="card shadow-sm border-0">
+        <!-- Header -->
+
+        <div class="card-header bg-primary text-white text-center py-4">
+          <h3 class="mb-1">Welcome Back</h3>
+          <small> Login to your account </small>
         </div>
 
-        <div class="card-body">
-          <p>Login page will be implemented later.</p>
+        <!-- Body -->
+
+        <div class="card-body p-4">
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <!-- Email -->
+
+            <div class="mb-3">
+              <label for="email" class="form-label"> Email Address </label>
+
+              <input
+                id="email"
+                type="email"
+                class="form-control"
+                formControlName="email"
+                placeholder="Enter your email"
+                autocomplete="email"
+              />
+
+              <!-- Required -->
+
+              @if (
+                loginForm.get('email')?.touched && loginForm.get('email')?.hasError('required')
+              ) {
+                <div class="text-danger small mt-1">Email address is required.</div>
+              }
+
+              <!-- Invalid Email -->
+
+              @if (loginForm.get('email')?.touched && loginForm.get('email')?.hasError('email')) {
+                <div class="text-danger small mt-1">Please enter a valid email address.</div>
+              }
+            </div>
+
+            <!-- Password -->
+
+            <div class="mb-3">
+              <label for="password" class="form-label"> Password </label>
+
+              <div class="input-group">
+                <input
+                  id="password"
+                  [type]="showPassword ? 'text' : 'password'"
+                  class="form-control"
+                  formControlName="password"
+                  placeholder="Enter your password"
+                  autocomplete="current-password"
+                />
+
+                <button type="button" class="btn btn-outline-secondary" (click)="togglePassword()">
+                  {{ showPassword ? 'Hide' : 'Show' }}
+                </button>
+              </div>
+
+              <!-- Required -->
+
+              @if (
+                loginForm.get('password')?.touched &&
+                loginForm.get('password')?.hasError('required')
+              ) {
+                <div class="text-danger small mt-1">Password is required.</div>
+              }
+
+              <!-- Minimum Length -->
+
+              @if (
+                loginForm.get('password')?.touched &&
+                loginForm.get('password')?.hasError('minlength')
+              ) {
+                <div class="text-danger small mt-1">
+                  Password must contain at least 8 characters.
+                </div>
+              }
+            </div>
+
+            <!-- Login Button -->
+
+            <div class="d-grid mt-4">
+              <button type="submit" class="btn btn-primary" [disabled]="isSubmitting">
+                @if (isSubmitting) {
+                  <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"> </span>
+
+                  Logging in...
+                } @else {
+                  Login
+                }
+              </button>
+            </div>
+
+            <!-- Register Link -->
+
+            <div class="text-center mt-4">
+              <span class="text-muted"> Don't have an account? </span>
+              <a routerLink="/register" class="ms-1"> Create Account </a>
+            </div>
+          </form>
         </div>
       </div>
     </div>
