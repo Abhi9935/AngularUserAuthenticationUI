@@ -9,7 +9,10 @@ import {
   Validators,
 } from '@angular/forms';
 import { RegisterRequest } from '../../models/register-request';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+
+import { AuthService } from '../../services/auth';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   imports: [ReactiveFormsModule, RouterLink],
@@ -20,10 +23,16 @@ import { RouterLink } from '@angular/router';
 export class Register {
   registerForm: FormGroup;
   isSubmitting = false;
+  successMessage = '';
+  errorMessage = '';
   showPassword = false;
   showConfirmPassword = false;
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(
+    private formBuilder: FormBuilder,
+    private authService: AuthService,
+    private router: Router,
+  ) {
     this.registerForm = this.formBuilder.group(
       {
         username: ['', Validators.required, Validators.minLength(3)],
@@ -36,18 +45,67 @@ export class Register {
       },
     );
   }
+
   onSubmit(): void {
+    this.successMessage = '';
+    this.errorMessage = '';
+
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
       return;
     }
+
     const request: RegisterRequest = {
-      username: this.registerForm.value.username,
-      email: this.registerForm.value.email,
-      password: this.registerForm.value.password,
+      Username: this.registerForm.value.username,
+      UserEmail: this.registerForm.value.email,
+      Password: this.registerForm.value.password,
     };
-    console.log('Form submitted, with Below Values'); // need to be replace with AuthService.register(...)
-    console.log(this.registerForm.value);
+
+    this.isSubmitting = true;
+
+    this.authService.register(request).subscribe({
+      next: (response) => {
+        this.isSubmitting = false;
+        this.successMessage = response.message || 'Registration successful!';
+        console.log('Registration successful');
+        // Optional: Redirect to Login page
+
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 1500);
+      },
+
+      error: (error) => {
+        this.isSubmitting = false;
+        console.error('Registration failed:', error);
+        this.errorMessage = this.getErrorMessage(error);
+      },
+    });
+  }
+
+  // Explicitly check the type inside your error helper
+  private getErrorMessage(error: any): string {
+    if (!error) {
+      return 'Something went wrong. Please try again.';
+    }
+
+    if (error.status === 0) {
+      return 'Unable to connect to the server.';
+    }
+
+    if (error.status === 400) {
+      return error.error?.message || 'Please check the information you entered.';
+    }
+
+    if (error.status === 409) {
+      return error.error?.message || 'An account with this information already exists.';
+    }
+
+    if (error.status >= 500) {
+      return 'Server error. Please try again later.';
+    }
+
+    return error.error?.message || 'Registration failed. Please try again.';
   }
 
   togglePassword(): void {
@@ -61,7 +119,6 @@ export class Register {
   passwordMatchValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const password = control.get('password')?.value;
-
       const confirmPassword = control.get('confirmPassword')?.value;
 
       if (password !== confirmPassword) {
