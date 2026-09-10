@@ -12,6 +12,17 @@
         <!-- Body -->
 
         <div class="card-body p-4">
+          @if (successMessage) {
+            <div class="alert alert-success" role="alert">
+              {{ successMessage }}
+            </div>
+          }
+          @if (errorMessage) {
+            <div class="alert alert-danger" role="alert">
+              {{ errorMessage }}
+            </div>
+          }
+
           <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
             <!-- Email -->
 
@@ -86,10 +97,9 @@
             <!-- Login Button -->
 
             <div class="d-grid mt-4">
-              <button type="submit" class="btn btn-primary" [disabled]="isSubmitting">
+              <button type="submit" class="btn btn-primary w-100" [disabled]="isSubmitting">
                 @if (isSubmitting) {
                   <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"> </span>
-
                   Logging in...
                 } @else {
                   Login

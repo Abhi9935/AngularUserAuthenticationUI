@@ -13,6 +13,18 @@
         <!-- Body -->
 
         <div class="card-body p-4">
+          @if (successMessage) {
+            <div class="alert alert-success" role="alert">
+              {{ successMessage }}
+            </div>
+          }
+
+          @if (errorMessage) {
+            <div class="alert alert-danger" role="alert">
+              {{ errorMessage }}
+            </div>
+          }
+
           <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
             <!-- Username -->
 
@@ -153,7 +165,6 @@
               <button type="submit" class="btn btn-primary" [disabled]="isSubmitting">
                 @if (isSubmitting) {
                   <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"> </span>
-
                   Registering...
                 } @else {
                   Register
