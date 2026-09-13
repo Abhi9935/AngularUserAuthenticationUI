@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { AuthService } from '../../services/auth';
 import { AuthStateService } from '../../services/auth-state';
 
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { LoginRequest } from '../../models/login-request';
 import { TokenService } from '../../services/token.service';
 
@@ -26,6 +26,7 @@ export class Login {
     private router: Router,
     private authStateService: AuthStateService,
     private tokenService: TokenService,
+    private activatedRoute: ActivatedRoute,
   ) {
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
@@ -57,7 +58,12 @@ export class Login {
         this.successMessage = 'Login successful!';
         // need to implement Token handling
         this.tokenService.setAccessToken(response.accessToken);
-        this.router.navigate(['/dashboard']);
+
+        const returnUrl = this.getSafeReturnUrl(
+          this.activatedRoute.snapshot.queryParamMap.get('returnUrl'),
+        );
+
+        this.router.navigateByUrl(returnUrl);
       },
 
       error: (error) => {
@@ -66,6 +72,14 @@ export class Login {
         this.errorMessage = this.getErrorMessage(error);
       },
     });
+  }
+
+  private getSafeReturnUrl(returnUrl: string | null): string {
+    if (returnUrl && returnUrl.startsWith('/') && !returnUrl.startsWith('//')) {
+      return returnUrl;
+    }
+
+    return '/dashboard';
   }
 
   private getErrorMessage(error: any): string {
