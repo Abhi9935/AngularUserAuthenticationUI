@@ -3,8 +3,8 @@ export const environment = {
   apiBaseUrl: 'https://localhost:7231',
 };
 export const API_ENDPOINTS = {
-  login: '/api/auth/login',
-  register: '/api/auth/register',
-  refreshToken: '/api/auth/refresh-token',
-  logout: '/api/auth/logout',
+  login: '/api/Auth/login',
+  register: '/api/Auth/register',
+  refreshToken: '/api/Auth/refresh-token',
+  logout: '/api/Auth/logout',
 };

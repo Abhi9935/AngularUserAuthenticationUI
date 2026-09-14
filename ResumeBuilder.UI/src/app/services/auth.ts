@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../environments/environment';
+import { API_ENDPOINTS, environment } from '../../environments/environment';
 import { TokenService } from './token.service';
 
 import { LoginRequest } from '../models/login-request';
@@ -26,13 +26,16 @@ export class AuthService {
   ) {}
 
   register(request: RegisterRequest) {
-    return this.http.post<RegisterResponse>(`${this.apiUrl}/Auth/register`, request);
+    return this.http.post<RegisterResponse>(`${this.apiUrl}${API_ENDPOINTS.register}`, request);
   }
 
   login(request: LoginRequest) {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/Auth/login`, request);
+    return this.http.post<LoginResponse>(`${this.apiUrl}${API_ENDPOINTS.login}`, request);
   }
   refreshToken(request: RefreshTokenRequest): Observable<RefreshTokenResponse> {
-    return this.http.post<RefreshTokenResponse>(`${this.apiUrl}/Auth/refresh-token`, request);
+    return this.http.post<RefreshTokenResponse>(
+      `${this.apiUrl}${API_ENDPOINTS.refreshToken}`,
+      request,
+    );
   }
 }

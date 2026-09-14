@@ -56,7 +56,7 @@ export class Login {
         console.log('Login successful:', response);
         this.authStateService.setAuthenticated();
         this.successMessage = 'Login successful!';
-        // need to implement Token handling
+
         this.tokenService.setAccessToken(response.accessToken);
         this.tokenService.setRefreshToken(response.refreshToken);
 
