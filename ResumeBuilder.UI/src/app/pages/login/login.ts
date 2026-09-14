@@ -58,6 +58,7 @@ export class Login {
         this.successMessage = 'Login successful!';
         // need to implement Token handling
         this.tokenService.setAccessToken(response.accessToken);
+        this.tokenService.setRefreshToken(response.refreshToken);
 
         const returnUrl = this.getSafeReturnUrl(
           this.activatedRoute.snapshot.queryParamMap.get('returnUrl'),
