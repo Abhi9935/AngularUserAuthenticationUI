@@ -2,8 +2,8 @@ import { inject } from '@angular/core';
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { catchError, switchMap, throwError } from 'rxjs';
 import { TokenService } from '../services/token.service';
-import { AuthService } from '../services/auth';
-import { AuthStateService } from '../services/auth-state';
+import { AuthService } from '../services/auth.service';
+import { AuthStateService } from '../services/auth-state.service';
 import { API_ENDPOINTS } from '../../environments/environment';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
