@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
-import { AuthState } from './auth-state';
+import { TokenRefreshService } from './token-refresh.service';
 
-describe('AuthState', () => {
-  let service: AuthState;
+describe('TokenRefreshService', () => {
+  let service: TokenRefreshService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(AuthState);
+    service = TestBed.inject(TokenRefreshService);
   });
 
   it('should be created', () => {

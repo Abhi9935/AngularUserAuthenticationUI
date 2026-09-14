@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AuthService } from '../../services/auth';
-import { AuthStateService } from '../../services/auth-state';
+import { AuthService } from '../../services/auth.service';
+import { AuthStateService } from '../../services/auth-state.service';
 
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { LoginRequest } from '../../models/login-request';

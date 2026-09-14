@@ -11,7 +11,7 @@ import {
 import { RegisterRequest } from '../../models/register-request';
 import { Router, RouterLink } from '@angular/router';
 
-import { AuthService } from '../../services/auth';
+import { AuthService } from '../../services/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
