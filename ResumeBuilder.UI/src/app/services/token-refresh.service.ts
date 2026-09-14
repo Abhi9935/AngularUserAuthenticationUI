@@ -13,7 +13,6 @@ import { AuthStateService } from './auth-state.service';
 })
 export class TokenRefreshService {
   private isRefreshing = false;
-
   private refreshTokenSubject = new BehaviorSubject<string | null>(null);
 
   constructor(
@@ -25,18 +24,13 @@ export class TokenRefreshService {
   refreshAccessToken(): Observable<string> {
     if (!this.isRefreshing) {
       this.isRefreshing = true;
-
       this.refreshTokenSubject.next(null);
-
       const refreshToken = this.tokenService.getRefreshToken();
 
       if (!refreshToken) {
         this.isRefreshing = false;
-
         this.tokenService.clearTokens();
-
         this.authStateService.setLoggedOut();
-
         return throwError(() => new Error('Refresh token is not available.'));
       }
 
@@ -64,11 +58,8 @@ export class TokenRefreshService {
 
           catchError((error) => {
             this.tokenService.clearTokens();
-
             this.authStateService.setLoggedOut();
-
             this.refreshTokenSubject.next(null);
-
             return throwError(() => error);
           }),
 
@@ -85,7 +76,6 @@ export class TokenRefreshService {
   private waitForRefresh(): Observable<string> {
     return this.refreshTokenSubject.pipe(
       filter((token) => token !== null),
-
       take(1),
     ) as Observable<string>;
   }

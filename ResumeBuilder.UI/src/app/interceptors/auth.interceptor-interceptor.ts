@@ -2,14 +2,14 @@ import { inject } from '@angular/core';
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { catchError, switchMap, throwError } from 'rxjs';
 import { TokenService } from '../services/token.service';
-import { AuthService } from '../services/auth.service';
 import { AuthStateService } from '../services/auth-state.service';
+import { TokenRefreshService } from '../services/token-refresh.service';
 import { API_ENDPOINTS } from '../../environments/environment';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const tokenService = inject(TokenService);
-  const authService = inject(AuthService);
   const authStateService = inject(AuthStateService);
+  const tokenRefreshService = inject(TokenRefreshService);
 
   // Detect Refresh Token Request
   const isRefreshRequest = req.url.includes(API_ENDPOINTS.refreshToken);
@@ -42,51 +42,24 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         return throwError(() => error);
       }
 
-      // Get Refresh Token
-      const refreshToken = tokenService.getRefreshToken();
+      // Refresh Token
+      return tokenRefreshService.refreshAccessToken().pipe(
+        switchMap((newAccessToken) => {
+          // Retry Original Request
+          const retryRequest = req.clone({
+            setHeaders: {
+              Authorization: `Bearer ${newAccessToken}`,
+            },
+          });
 
-      // Refresh Token Missing
-      if (!refreshToken) {
-        tokenService.clearTokens();
-        authStateService.setLoggedOut();
-        return throwError(() => error);
-      }
+          return next(retryRequest);
+        }),
 
-      // Call Refresh API
-      return authService
-        .refreshToken({
-          refreshToken: refreshToken,
-        })
-        .pipe(
-          switchMap((response) => {
-            // Save New Access Token
-            tokenService.setAccessToken(response.accessToken);
-
-            // Save New Refresh Token
-            if (response.refreshToken) {
-              tokenService.setRefreshToken(response.refreshToken);
-            }
-
-            // Update Auth State
-            authStateService.setAuthenticated();
-
-            // Retry Original Request
-            const retryRequest = req.clone({
-              setHeaders: {
-                Authorization: `Bearer ${response.accessToken}`,
-              },
-            });
-
-            return next(retryRequest);
-          }),
-
-          // Refresh Failed
-          catchError((refreshError) => {
-            tokenService.clearTokens();
-            authStateService.setLoggedOut();
-            return throwError(() => refreshError);
-          }),
-        );
+        catchError((refreshError) => {
+          authStateService.setLoggedOut();
+          return throwError(() => refreshError);
+        }),
+      );
     }),
   );
 };
