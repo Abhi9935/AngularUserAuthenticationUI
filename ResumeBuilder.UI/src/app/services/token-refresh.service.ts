@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { catchError, filter, finalize, map, take } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { catchError, finalize, map, shareReplay } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 import { TokenService } from './token.service';
 import { AuthStateService } from './auth-state.service';
@@ -9,8 +9,7 @@ import { AuthStateService } from './auth-state.service';
   providedIn: 'root',
 })
 export class TokenRefreshService {
-  private isRefreshing = false;
-  private refreshTokenSubject = new BehaviorSubject<string | null>(null);
+  private refreshRequest$: Observable<string> | null = null;
 
   constructor(
     private authService: AuthService,
@@ -19,61 +18,53 @@ export class TokenRefreshService {
   ) {}
 
   refreshAccessToken(): Observable<string> {
-    if (!this.isRefreshing) {
-      this.isRefreshing = true;
-      this.refreshTokenSubject.next(null);
-      const refreshToken = this.tokenService.getRefreshToken();
-
-      if (!refreshToken) {
-        this.isRefreshing = false;
-        this.tokenService.clearTokens();
-        this.authStateService.setLoggedOut();
-        return throwError(() => new Error('Refresh token is not available.'));
-      }
-
-      return this.authService
-        .refreshToken({
-          refreshToken: refreshToken,
-        })
-        .pipe(
-          map((response) => {
-            // Save new access token
-            this.tokenService.setAccessToken(response.accessToken);
-
-            // Save rotated refresh token
-            if (response.refreshToken) {
-              this.tokenService.setRefreshToken(response.refreshToken);
-            }
-
-            this.authStateService.setAuthenticated();
-
-            // Tell waiting requests
-            this.refreshTokenSubject.next(response.accessToken);
-
-            return response.accessToken;
-          }),
-
-          catchError((error) => {
-            this.tokenService.clearTokens();
-            this.authStateService.setLoggedOut();
-            this.refreshTokenSubject.next(null);
-            return throwError(() => error);
-          }),
-
-          finalize(() => {
-            this.isRefreshing = false;
-          }),
-        );
+    // Refresh already running
+    if (this.refreshRequest$) {
+      return this.refreshRequest$;
     }
 
-    // Refresh already running
-    return this.waitForRefresh();
-  }
+    // Get refresh token
+    const refreshToken = this.tokenService.getRefreshToken();
 
-  private waitForRefresh(): Observable<string> {
-    return this.refreshTokenSubject.pipe(
-      filter((token) => token !== null),
-      take(1),
-    ) as Observable<string>;
+    if (!refreshToken) {
+      this.tokenService.clearTokens();
+      this.authStateService.setLoggedOut();
+      return throwError(() => new Error('Refresh token is not available.'));
+    }
+
+    // Create refresh request
+    this.refreshRequest$ = this.authService
+      .refreshToken({
+        refreshToken: refreshToken,
+      })
+      .pipe(
+        // Save new tokens
+        map((response) => {
+          this.tokenService.setAccessToken(response.accessToken);
+
+          if (response.refreshToken) {
+            this.tokenService.setRefreshToken(response.refreshToken);
+          }
+
+          this.authStateService.setAuthenticated();
+          return response.accessToken;
+        }),
+
+        // Handle refresh failure
+        catchError((error) => {
+          this.tokenService.clearTokens();
+          this.authStateService.setLoggedOut();
+          return throwError(() => error);
+        }),
+
+        // Share one HTTP request
+        shareReplay(1),
+        // Allow future refreshes
+        finalize(() => {
+          this.refreshRequest$ = null;
+        }),
+      );
+
+    return this.refreshRequest$;
   }
 }
