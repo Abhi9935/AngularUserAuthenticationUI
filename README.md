@@ -63,3 +63,120 @@ Before Angular A-19, both tokens were stored in browser `sessionStorage`.
                                          |
                                          v
                                   .NET Core API
+Token storage:
+
+Browser sessionStorage
+│
+├── access_token
+│
+└── refresh_token
+
+3. Complete Project Structure
+A typical Angular project structure:
+src/
+│
+├── app/
+│   │
+│   ├── components/
+│   │   │
+│   │   ├── login/
+│   │   │   ├── login.ts
+│   │   │   ├── login.html
+│   │   │   └── login.css
+│   │   │
+│   │   ├── register/
+│   │   │   ├── register.ts
+│   │   │   ├── register.html
+│   │   │   └── register.css
+│   │   │
+│   │   └── dashboard/
+│   │       ├── dashboard.ts
+│   │       ├── dashboard.html
+│   │       └── dashboard.css
+│   │
+│   ├── services/
+│   │   │
+│   │   ├── auth.service.ts
+│   │   ├── token.service.ts
+│   │   ├── token-refresh.service.ts
+│   │   └── auth-state.service.ts
+│   │
+│   ├── guards/
+│   │   │
+│   │   └── auth.guard.ts
+│   │
+│   ├── interceptors/
+│   │   │
+│   │   └── auth.interceptor.ts
+│   │
+│   ├── models/
+│   │   │
+│   │   ├── login-request.ts
+│   │   ├── login-response.ts
+│   │   ├── register-request.ts
+│   │   ├── refresh-token-request.ts
+│   │   ├── refresh-token-response.ts
+│   │   └── logout-request.ts
+│   │
+│   ├── app.routes.ts
+│   ├── app.config.ts
+│   └── app.ts
+│
+├── environments/
+│   ├── environment.ts
+│   └── environment.development.ts
+│
+├── index.html
+├── main.ts
+└── styles.css
+
+4. Responsibility of Each Folder
+components/
+
+Contains UI components.
+components/
+│
+├── login/
+├── register/
+└── dashboard/
+
+Responsibilities:
+
+LoginComponent
+    |
+    +-- Login form
+    +-- Call AuthService.login()
+    +-- Store tokens
+    +-- Update authentication state
+    +-- Navigate to dashboard
+RegisterComponent
+    |
+    +-- Registration form
+    +-- Call AuthService.register()
+    +-- Show success/error message
+    +-- Navigate to login
+DashboardComponent
+    |
+    +-- Protected page
+    +-- Logout
+    +-- Logout All Devices
+
+Components should NOT contain authentication logic such as:
+
+JWT validation
+Refresh token handling
+Token refresh coordination
+Token storage implementation
+
+Those responsibilities belong to services/interceptors.
+
+5. services/
+services/
+│
+├── auth.service.ts
+├── token.service.ts
+├── token-refresh.service.ts
+└── auth-state.service.ts
+
+Each service has a specific responsibility.
+
