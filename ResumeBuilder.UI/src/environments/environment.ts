@@ -7,4 +7,5 @@ export const API_ENDPOINTS = {
   register: '/api/Auth/register',
   refreshToken: '/api/Auth/refresh-token',
   logout: '/api/Auth/logout',
+  logoutAll: '/api/Auth/logout-all',
 };

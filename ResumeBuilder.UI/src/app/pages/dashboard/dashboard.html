@@ -8,7 +8,19 @@
           <p class="text-success mb-0">You are logged in successfully.</p>
         </div>
 
-        <button type="button" class="btn btn-danger" (click)="logout()">Logout</button>
+        <div>
+          <button type="button" class="btn btn-danger" [disabled]="isLoggingOut" (click)="logout()">
+            {{ isLoggingOut ? 'Logging out...' : 'Logout' }}
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline-danger"
+            [disabled]="isLoggingOut"
+            (click)="logoutAllDevices()"
+          >
+            {{ isLoggingOut ? 'Logging out all devices...' : 'Logout All Devices' }}
+          </button>
+        </div>
       </div>
     </div>
   </div>

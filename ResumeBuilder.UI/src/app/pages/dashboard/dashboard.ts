@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+
 import { AuthService } from '../../services/auth.service';
-import { TokenService } from '../../services/token.service';
-import { AuthStateService } from '../../services/auth-state.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -10,41 +8,34 @@ import { AuthStateService } from '../../services/auth-state.service';
   styleUrl: './dashboard.css',
   templateUrl: './dashboard.html',
 })
-export class Dashboard {
-  constructor(
-    private authService: AuthService,
-    private tokenService: TokenService,
-    private authStateService: AuthStateService,
-    private router: Router,
-  ) {}
+export class DashboardComponent {
+  constructor(private authService: AuthService) {}
+
+  isLoggingOut = false;
 
   logout(): void {
-    const refreshToken = this.tokenService.getRefreshToken();
-
-    if (!refreshToken) {
-      this.performLocalLogout();
+    if (this.isLoggingOut) {
       return;
     }
 
-    this.authService
-      .logout({
-        refreshToken: refreshToken,
-      })
-      .subscribe({
-        next: () => {
-          this.performLocalLogout();
-        },
-
-        error: () => {
-          //Even if the server logout fails, remove local authentication.
-          this.performLocalLogout();
-        },
-      });
+    this.isLoggingOut = true;
+    this.authService.logout().subscribe({
+      complete: () => {
+        this.isLoggingOut = false;
+      },
+    });
   }
 
-  private performLocalLogout(): void {
-    this.tokenService.clearTokens();
-    this.authStateService.setLoggedOut();
-    this.router.navigate(['/login']);
+  logoutAllDevices(): void {
+    if (this.isLoggingOut) {
+      return;
+    }
+
+    this.isLoggingOut = true;
+    this.authService.logoutAllDevices().subscribe({
+      complete: () => {
+        this.isLoggingOut = false;
+      },
+    });
   }
 }
