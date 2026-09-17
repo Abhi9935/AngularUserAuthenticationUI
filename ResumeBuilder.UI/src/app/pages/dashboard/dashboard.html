@@ -1,9 +1,27 @@
 <div class="container mt-5">
   <div class="card shadow-sm">
     <div class="card-body">
-      <h1 class="mb-3">Dashboard</h1>
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h1 class="mb-2">Dashboard</h1>
 
-      <p class="text-success">You are logged in successfully.</p>
+          <p class="text-success mb-0">You are logged in successfully.</p>
+        </div>
+
+        <div>
+          <button type="button" class="btn btn-danger" [disabled]="isLoggingOut" (click)="logout()">
+            {{ isLoggingOut ? 'Logging out...' : 'Logout' }}
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline-danger"
+            [disabled]="isLoggingOut"
+            (click)="logoutAllDevices()"
+          >
+            {{ isLoggingOut ? 'Logging out all devices...' : 'Logout All Devices' }}
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
