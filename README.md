@@ -8,18 +8,6 @@
 
 The Angular application is the frontend for an existing .NET Core Web API.
 
-The backend provides:
-
-- User Registration
-- User Login
-- JWT Access Token
-- Refresh Token
-- Refresh Token Rotation
-- Refresh Token Replay Detection
-- Logout
-- Logout All Devices
-- User APIs protected by JWT Authentication
-
 The Angular frontend provides:
 
 - Registration screen
@@ -33,6 +21,18 @@ The Angular frontend provides:
 - Logout
 - Logout from all devices
 - Protected routes
+  
+The backend provides:
+
+- User Registration
+- User Login
+- JWT Access Token
+- Refresh Token
+- Refresh Token Rotation
+- Refresh Token Replay Detection
+- Logout
+- Logout All Devices
+- User APIs protected by JWT Authentication
 
 ---
 
