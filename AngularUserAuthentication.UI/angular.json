@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "ResumeBuilder.UI": {
+    "AngularUserAuthentication.UI": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -24,10 +24,7 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "src/styles.css"
-            ],
+            "styles": ["node_modules/bootstrap/dist/css/bootstrap.min.css", "src/styles.css"],
             "server": "src/main.server.ts",
             "outputMode": "server",
             "security": {
@@ -65,10 +62,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "ResumeBuilder.UI:build:production"
+              "buildTarget": "AngularUserAuthentication.UI:build:production"
             },
             "development": {
-              "buildTarget": "ResumeBuilder.UI:build:development"
+              "buildTarget": "AngularUserAuthentication.UI:build:development"
             }
           },
           "defaultConfiguration": "development"

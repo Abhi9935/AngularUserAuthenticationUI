@@ -8,7 +8,7 @@ import { AuthService } from '../../services/auth.service';
   styleUrl: './dashboard.css',
   templateUrl: './dashboard.html',
 })
-export class DashboardComponent {
+export class Dashboard {
   constructor(private authService: AuthService) {}
 
   isLoggingOut = false;

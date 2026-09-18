@@ -10,5 +10,5 @@ import { Footer } from './shared/footer/footer';
   styleUrl: './app.css',
 })
 export class App {
-  protected readonly title = signal('ResumeBuilder.UI');
+  protected readonly title = signal('AngularUserAuthentication.UI');
 }
